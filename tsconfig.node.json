@@ -5,5 +5,10 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.mts"]
+  "include": [
+    "vite.config.mts",
+    ".eslintrc.cjs",
+    "postcss.config.js",
+    "prettier.config.cjs"
+  ]
 }

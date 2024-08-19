@@ -1,9 +1,9 @@
-import { resolve } from 'path';
 import legacy from '@vitejs/plugin-legacy';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 import type { ConfigEnv } from 'vite';
 import { defineConfig, loadEnv } from 'vite';
 import viteCompression from 'vite-plugin-compression';
-import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 // https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated
@@ -26,9 +26,9 @@ export default ({ command, mode }: ConfigEnv) => {
         ext: '.gz', // 文件类型
       }),
     ],
-    //项目部署的基础路径,
+    // 项目部署的基础路径,
     base: currentEnv.VITE_PUBLIC_PATH,
-    mode: mode,
+    mode,
     resolve: {
       // alias: [
       //   { find: /^@/, replacement: resolve(__dirname, './src/BIZ') },
@@ -67,13 +67,13 @@ export default ({ command, mode }: ConfigEnv) => {
         },
       },
     },
-    //构建
+    // 构建
     build: {
       // outDir: `dist_${format(new Date(), 'yyyyMMdd_HHmm')}`, //输出路径  新增打日期包
-      //构建后是否生成 source map 文件
-      sourcemap: mode != 'production',
+      // 构建后是否生成 source map 文件
+      sourcemap: mode !== 'production',
       target: 'es2015',
-      //打包去掉打印信息 保留debugger vite3需要单独安装terser才行
+      // 打包去掉打印信息 保留debugger vite3需要单独安装terser才行
       // minify: 'terser',
       // terserOptions: {
       //   compress: {

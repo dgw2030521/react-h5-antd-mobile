@@ -46,6 +46,7 @@ module.exports = {
     'import/no-unresolved': 0, // 允许import未定义
     'import/prefer-default-export': 0, // 允许默认导出
     'import/exports-last': 2, // 导出必须放在最后
+    'import/no-extraneous-dependencies': 0,
     // unused-imports
     'unused-imports/no-unused-imports': 2, // 禁止未使用的import
     'unused-imports/no-unused-vars': 2, // 禁止未使用的变量
@@ -111,7 +112,7 @@ module.exports = {
     'jsx-a11y/label-has-for': 0,
   },
   parserOptions: {
-    project: ['./tsconfig.json'],
+    project: ['./tsconfig.json', './tsconfig.node.json'],
     ecmaFeatures: {
       jsx: true,
     },
