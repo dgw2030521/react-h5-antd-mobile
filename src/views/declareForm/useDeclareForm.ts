@@ -17,6 +17,9 @@
  * 草稿详情
  * PolicyApplyDraftInvoker.draftDetail
  *
+ * 退回修改查询已填信息
+ * PolicyApplyFormInvokerEx.detail
+ *
  * 页面表单
  * PolicyConfigInvoker.getMeta
  *
@@ -38,31 +41,31 @@
  * 所属市、所属区县、所属街道/园区,根据Type字段筛选
  * DictAreaInvoker.display
  */
+import { ApplyPeriodType } from '@CodeDefine/customer/ApplyPeriodType';
+import { AppType } from '@CodeDefine/customer/AppType';
+import { AreaDisplayConditionVO } from '@CodeDefine/customer/AreaDisplayConditionVO';
+import { AreaViewRO } from '@CodeDefine/customer/AreaViewRO';
 import { CustomerPolicyDetailRO } from '@CodeDefine/customer/CustomerPolicyDetailRO';
+import { CompanyBankInvoker } from '@CodeDefine/customer/Invoker/CompanyBankInvoker';
+import { DictAreaInvoker } from '@CodeDefine/customer/Invoker/DictAreaInvoker';
 import { DictPolicyTypeInvoker } from '@CodeDefine/customer/Invoker/DictPolicyTypeInvoker';
+import { PersonBankInvoker } from '@CodeDefine/customer/Invoker/PersonBankInvoker';
+import { PolicyApplyDraftInvoker } from '@CodeDefine/customer/Invoker/PolicyApplyDraftInvoker';
+import { PolicyApplyFormInvoker } from '@CodeDefine/customer/Invoker/PolicyApplyFormInvoker';
+import { PolicyConfigInvoker } from '@CodeDefine/customer/Invoker/PolicyConfigInvoker';
 import { PolicyInvoker } from '@CodeDefine/customer/Invoker/PolicyInvoker';
+import { PolicyMetaFormValueInvoker } from '@CodeDefine/customer/Invoker/PolicyMetaFormValueInvoker';
+import { PolicyApplyFormRO } from '@CodeDefine/customer/PolicyApplyFormRO';
+import { PolicyApplyPromiseRO } from '@CodeDefine/customer/PolicyApplyPromiseRO';
+import { PolicyStatus } from '@CodeDefine/customer/PolicyStatus';
 import { PolicyTypeDisplayConditionVO } from '@CodeDefine/customer/PolicyTypeDisplayConditionVO';
 import { PolicyTypeViewRO } from '@CodeDefine/customer/PolicyTypeViewRO';
-import { useState } from 'react';
-import { PolicyConfigInvoker } from '@CodeDefine/customer/Invoker/PolicyConfigInvoker';
-import { AppType } from '@CodeDefine/customer/AppType';
-import { PolicyMetaFormValueInvoker } from '@CodeDefine/customer/Invoker/PolicyMetaFormValueInvoker';
-import { CompanyBankInvoker } from '@CodeDefine/customer/Invoker/CompanyBankInvoker';
-import { PolicyApplyFormInvoker } from '@CodeDefine/customer/Invoker/PolicyApplyFormInvoker';
-import { ApplyPeriodType } from '@CodeDefine/customer/ApplyPeriodType';
-import { PolicyApplyDraftInvoker } from '@CodeDefine/customer/Invoker/PolicyApplyDraftInvoker';
-import { PolicyStatus } from '@CodeDefine/customer/PolicyStatus';
-import { PolicyApplyPromiseRO } from '@CodeDefine/customer/PolicyApplyPromiseRO';
-import { AreaDisplayConditionVO } from '@CodeDefine/customer/AreaDisplayConditionVO';
-import { DictAreaInvoker } from '@CodeDefine/customer/Invoker/DictAreaInvoker';
-import { AreaViewRO } from '@CodeDefine/customer/AreaViewRO';
-import { PersonBankInvoker } from '@CodeDefine/customer/Invoker/PersonBankInvoker';
 import { ViEnum32 } from '@ViCross/ViEnum32';
-import { PolicyApplyFormRO } from '@CodeDefine/customer/PolicyApplyFormRO';
-import { useLoginContext } from '@/store/user';
+import { useState } from 'react';
 
 export default function useDeclareForm() {
-  const [policyInfo, setPolicyInfo] = useState<CustomerPolicyDetailRO>();
+  const [policyInfo, setPolicyInfo] = useState<CustomerPolicyDetailRO>(null);
+  const [draftDetail, setDraftDetail] = useState<PolicyApplyFormRO>(null);
   const [allPolicyTypes, setAllPolicyTypes] = useState<PolicyTypeViewRO[]>();
   const [areaList, setAreaList] = useState<AreaViewRO[]>();
   const [promiseList, setPromiseList] = useState<PolicyApplyPromiseRO[]>([]);
@@ -112,7 +115,7 @@ export default function useDeclareForm() {
   };
 
   /**
-   * 表单元数据获取初始值
+   * 动态表单元数据获取初始值
    * @param draftFormID 调用draftDetail接口拿到的最新的草稿id
    * @param metaID
    */
@@ -133,8 +136,8 @@ export default function useDeclareForm() {
 
   /**
    * 获取表单自动填充的值，非草稿请求
-   * @param formID 传入的metaId
-   * @param applyFormId 默认为0，没有获取到元数据草稿时候，传入0，有数据草稿使用getDraftMetaDetailByMetaID
+   * @param metaId 传入的metaId
+   * @param draftId 默认为0，没有获取到元数据草稿时候，传入0，有数据草稿使用getDraftMetaDetailByMetaID
    *
    * @example
    * const allApplyInfoRequest = metaIds?.map(item => {
@@ -144,10 +147,10 @@ export default function useDeclareForm() {
    *             );
    *      });
    */
-  const getApplyInfo = async (formID: string, applyFormId: string = '0') => {
+  const getApplyInfo = async (metaId: string, draftId: string = '0') => {
     const { code, result } = await PolicyMetaFormValueInvoker.getApplyInfo(
-      formID,
-      applyFormId,
+      metaId,
+      draftId,
     );
     if (code.Code !== 200) {
       throw new Error(code.Message);
@@ -254,14 +257,18 @@ export default function useDeclareForm() {
     //   return { draftid: '0' };
     // }
 
+    // 不报错，返回一个ID='0'的新值
     if (code.Code !== 200) {
-      // 不报错，返回一个ID='0'的新值
       // throw new Error(code.Message);
       const newResult = new PolicyApplyFormRO();
       newResult.ID = '0';
+
+      setDraftDetail(newResult);
+
       return newResult;
     }
-    // 获取的值，要么有值，要么为0
+    setDraftDetail(result);
+    // 获取的值，要么有值，要么为'0'
     return result;
   };
 
@@ -337,6 +344,9 @@ export default function useDeclareForm() {
     promiseList,
     areaList,
     policyInfo,
+    setPolicyInfo,
+    draftDetail,
+    setDraftDetail,
 
     allPolicyTypes,
     policyStatusName,

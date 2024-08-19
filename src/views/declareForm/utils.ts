@@ -1,207 +1,19 @@
-import { each, map } from 'lodash-es';
-import { SpecialHandledCode } from '@CodeDefine/customer/SpecialHandledCode';
 import { PolicyGetMetaRO } from '@CodeDefine/customer/PolicyGetMetaRO';
 import { PolicyMetaConfigRO } from '@CodeDefine/customer/PolicyMetaConfigRO';
+import { SpecialHandledCode } from '@CodeDefine/customer/SpecialHandledCode';
+import { each, map } from 'lodash-es';
+
 import { token_name } from '@/utils/constant';
 
 export type SchemaRowDefine = Partial<PolicyMetaConfigRO> & { FormSchema: any };
 
-const demoSchema = {
-  type: 'object',
-  properties: {
-    obj: {
-      type: 'object',
-      title: '卡片主题',
-      description: '这是一个对象类型',
-      widget: 'formBox',
-      props: { expand: true },
-      properties: {
-        picker: {
-          title: 'picker',
-          type: 'array',
-          widget: 'picker',
-          required: true,
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-          // props: {
-          //   options: [
-          //     { label: '火车', value: 1 },
-          //     { label: '飞机', value: 2 },
-          //     { label: '火箭', value: 3 },
-          //   ],
-          // },
-        },
-        input: {
-          title: '输入框',
-          type: 'string',
-          widget: 'input',
-          required: true,
-          placeholder: '请输入内容',
-          defaultValue: '11111',
-        },
-        slider: {
-          title: '滑动条',
-          type: 'string',
-          widget: 'slider',
-        },
-        switch: {
-          title: '开关',
-          type: 'bool',
-          widget: 'switch',
-          props: {
-            uncheckedText: '关',
-            checkedText: '开',
-          },
-        },
-        stepper: {
-          title: '步进器',
-          type: 'number',
-          widget: 'stepper',
-        },
-        selector: {
-          // required: true,
-          title: '选择组多选',
-          type: 'string',
-          widget: 'selector',
-          props: {
-            multiple: true,
-            options: [
-              { label: 'A', value: 'a' },
-              { label: 'B', value: 'b' },
-              { label: 'C', value: 'c' },
-              { label: 'D', value: 'd' },
-              { label: 'E', value: 'e' },
-              { label: 'F', value: 'f' },
-            ],
-          },
-        },
-        selector2: {
-          title: '选择组单选',
-          type: 'string',
-          widget: 'selector',
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-        },
-        radio: {
-          title: '单选',
-          type: 'string',
-          widget: 'radio',
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-          // props: {
-          //   options: [
-          //     { label: '早', value: 'a' },
-          //     { label: '中', value: 'b' },
-          //     { label: '晚', value: 'c' },
-          //   ],
-          // },
-        },
-        date: {
-          title: '日期',
-          type: 'string',
-          widget: 'datePicker',
-          props: {
-            precision: 'month',
-          },
-        },
-        city: {
-          title: '城市',
-          type: 'array',
-          widget: 'cascader',
-          props: {
-            options: [
-              {
-                label: '浙江',
-                value: 1,
-                children: [{ label: '杭州', value: 2 }],
-              },
-            ],
-          },
-        },
-      },
-    },
-    obj2: {
-      type: 'object',
-      title: '卡片主题',
-      description: '这是一个对象类型',
-      widget: 'formBox',
-      properties: {
-        picker: {
-          title: 'picker',
-          type: 'array',
-          widget: 'picker',
-          required: true,
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-          // props: {
-          //   options: [
-          //     { label: '火车', value: 1 },
-          //     { label: '飞机', value: 2 },
-          //     { label: '火箭', value: 3 },
-          //   ],
-          // },
-        },
-        input: {
-          title: '输入框',
-          type: 'string',
-          widget: 'input',
-          required: true,
-          placeholder: '请输入内容',
-        },
-        slider: {
-          title: '滑动条',
-          type: 'string',
-          widget: 'slider',
-        },
-        switch: {
-          title: '开关',
-          type: 'bool',
-          widget: 'switch',
-          props: {
-            uncheckedText: '关',
-            checkedText: '开',
-          },
-        },
-        stepper: {
-          title: '步进器',
-          type: 'number',
-          widget: 'stepper',
-        },
-        selector: {
-          // required: true,
-          title: '选择组多选',
-          type: 'string',
-          widget: 'selector',
-          props: {
-            multiple: true,
-            options: [
-              { label: 'A', value: 'a' },
-              { label: 'B', value: 'b' },
-              { label: 'C', value: 'c' },
-              { label: 'D', value: 'd' },
-              { label: 'E', value: 'e' },
-              { label: 'F', value: 'f' },
-            ],
-          },
-        },
-        selector2: {
-          title: '选择组单选',
-          type: 'string',
-          widget: 'selector',
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-        },
-      },
-    },
-  },
-};
+const META_KEY = 'META';
 
 /**
  * 将pc端的formSchema协议转为支持h5的
  * 1、类型 枚举在pc端对应的都是string，但在h5对应的widget取值都是array
  * 2、内置支持的组件重新映射，比如select等
- *
- * readOnlyWidget 指定只读渲染组件
+ * 3、readOnlyWidget 指定只读渲染组件
  *
  * @param formSchema
  * @param options
@@ -213,16 +25,22 @@ const reMapWidget = (
   const { companyBank, personBank } = options;
 
   each(formSchema.properties, (value: any, key) => {
+    // 占位符
+    if (value.title === ' ' && value.type === 'string') {
+      //   识别为占位符
+    }
+
     if (value.readOnly) {
       value.disabled = true;
     }
+
     // const enums = value.enum;
     // const enumNames = value.enumNames;
     // 单纯的input
     if (value.type === 'string' && !value.widget) {
       value.widget = 'input';
-      // widget: 'textArea',
       value.placeholder = '请输入内容';
+      // value.defaultValue = 'abc';
     }
     // 特殊数字展示，待unit
     if (value.type === 'number') {
@@ -242,16 +60,14 @@ const reMapWidget = (
     // 日期
     if (value.type === 'string' && value.format === 'date') {
       value.widget = 'datePicker';
-      value.props = {
-        precision: 'day',
-      };
+      value.precision = 'day';
+      value.format = 'YYYY-MM-DD';
     }
     //  时间
     if (value.type === 'string' && value.format === 'dateTime') {
       value.widget = 'datePicker';
-      value.props = {
-        precision: 'minute',
-      };
+      value.precision = 'minute';
+      value.format = 'YYYY-MM-DD hh:mm';
     }
     // textarea
     if (value.type === 'string' && value.format === 'textarea') {
@@ -320,15 +136,37 @@ const reMapWidget = (
 
 /**
  * 将metaConfig中的metaList和tabList打平
+ * 因为不需要显示tab，所以建立新的metaList一维数组
+ * @NOTICE 后续若需要区分tab，则建立一个以metaList为元素的二维数组
  * @param metaConfig
  */
 const flattenMetaList = (metaConfig: PolicyGetMetaRO) => {
+  let returnList: PolicyMetaConfigRO[] = [];
+  returnList = [...metaConfig.metaList];
+  each(metaConfig.tabList, tabItem => {
+    if (!tabItem.Deleted) {
+      const newMetaList = map(tabItem.MetaList, metaItem => {
+        metaItem.Name = `${metaItem.Name}`;
+        return metaItem;
+      });
+      returnList = [...returnList, ...newMetaList];
+    }
+  });
+
+  return returnList;
+};
+
+/**
+ * 以metaList为元素的二维数组，区分tab展示tab
+ * @param metaConfig
+ */
+const flattenMetaListSecond = (metaConfig: PolicyGetMetaRO) => {
   const returnList: PolicyMetaConfigRO[][] = [];
   returnList.push(metaConfig.metaList);
   each(metaConfig.tabList, tabItem => {
     if (!tabItem.Deleted) {
       const newMetaList = map(tabItem.MetaList, metaItem => {
-        metaItem.Name = `${metaItem.Name}`;
+        metaItem.Name = `${tabItem.Name}-${metaItem.Name}`;
         return metaItem;
       });
       returnList.push(newMetaList);
@@ -339,42 +177,75 @@ const flattenMetaList = (metaConfig: PolicyGetMetaRO) => {
 };
 /**
  * 生成申报表单
- * @param metaListSet
+ * @param metaLists
  * @param options
+ * @param renderConfig 免申都打开，需要申报的就打开默认的
  * @param initialValues
- * @param defaultExpand 免申都打开，需要申报的就打开默认的
  */
 const createFormSchemaByMetaList = (
-  metaListSet: PolicyMetaConfigRO[][],
-  options?: { companyBank: any; personBank: any },
-  initialValues?: any,
-  defaultExpand?: boolean,
+  metaLists: PolicyMetaConfigRO[],
+  options: { companyBank: any; personBank: any; [index: string]: any },
+  renderConfig: {
+    /**
+     * 默认展开
+     */
+    defaultExpand?: boolean;
+    /**
+     * 隐藏展开按钮
+     */
+    hideExpandBtn?: boolean;
+    [index: string]: any;
+  },
 ) => {
-  console.log('initialValues', initialValues);
+  const { defaultExpand, hideExpandBtn } = renderConfig;
   const returnSchema = {
     type: 'object',
     properties: {},
   };
-  each(metaListSet, metaList => {
-    metaList.forEach(item => {
-      const formSchema = JSON.parse(item.metaFormRO.FormSchema);
-      const eachMetaListProps = {
-        type: 'object',
-        title: `${item.Name}`,
-        description: '',
-        widget: 'formBox',
-        props: { expand: defaultExpand || item.AsDefault },
-        properties: {},
-      };
-      console.log('formSchema!!!', JSON.parse(item.metaFormRO.FormSchema));
-      // 直接在原formSchema对象上修改
-      reMapWidget(formSchema, options);
-      eachMetaListProps.properties = formSchema.properties;
-      returnSchema.properties[item.Meta.ID] = eachMetaListProps;
-    });
+  each(metaLists, item => {
+    const formSchema = JSON.parse(item.metaFormRO.FormSchema);
+    const eachMetaListProps = {
+      type: 'object',
+      title: `${item.Name}`,
+      description: '',
+      widget: 'formBox',
+      props: { expand: defaultExpand || item.AsDefault, hideExpandBtn },
+      properties: {},
+    };
+    const pcSchemata = JSON.parse(item.metaFormRO.FormSchema);
+    console.log('!!!!pcSchemata', pcSchemata);
+    reMapWidget(formSchema, options);
+    eachMetaListProps.properties = formSchema.properties;
+    const metaId = item.Meta.ID;
+    returnSchema.properties[`${META_KEY}${metaId}`] = eachMetaListProps;
   });
-  console.log('@@@@returnSchema', returnSchema);
+  console.log('@@@@totalSchema', returnSchema);
   return returnSchema;
 };
 
-export { reMapWidget, flattenMetaList, createFormSchemaByMetaList, demoSchema };
+const convertInitialValueBySchemaDefine = (
+  metaKey: string,
+  fieldCode: string,
+  metaValue: any,
+  renderSchema: any,
+) => {
+  const matchedSchemaDefine =
+    renderSchema.properties[metaKey].properties[fieldCode];
+
+  const matchedType = matchedSchemaDefine?.type;
+
+  if (matchedType === 'array' && typeof metaValue === 'string') {
+    metaValue = [metaValue];
+  }
+
+  return metaValue;
+};
+
+export {
+  convertInitialValueBySchemaDefine,
+  createFormSchemaByMetaList,
+  flattenMetaList,
+  flattenMetaListSecond,
+  META_KEY,
+  reMapWidget,
+};

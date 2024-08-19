@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
 import { DownOutline, UpOutline } from 'antd-mobile-icons';
 import classNames from 'classnames';
+import React, { useState } from 'react';
+
 import styles from '@/views/declareForm/index.module.scss';
 
 interface FormBoxProps {
@@ -28,6 +29,9 @@ export default function FormBox(props: FormBoxProps) {
       <div
         className={styles.head}
         onClick={() => {
+          if (hideExpandBtn) {
+            return;
+          }
           setExpand(!expand);
         }}
       >

@@ -1,9 +1,14 @@
-import React from 'react';
 import { Input, Space } from 'antd-mobile';
+import React from 'react';
+
 import styles from './index.module.scss';
 
 export default function MyNumber(props: any) {
-  const { schema, value, onChange } = props;
+  const { schema, value, onChange, readOnly } = props;
+
+  if (readOnly) {
+    return <span>{`${value}(${schema.UnitName})`}</span>;
+  }
 
   return (
     <Space className={styles.inputBox}>
@@ -15,7 +20,9 @@ export default function MyNumber(props: any) {
         defaultValue={value}
         onChange={onChange}
       />
-      <span className={styles.icon}>{schema.UnitName || '测试单位'}</span>
+      {schema.UnitName && (
+        <span className={styles.icon}>{schema.UnitName}</span>
+      )}
     </Space>
   );
 }

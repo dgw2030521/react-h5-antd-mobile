@@ -1,3 +1,5 @@
+import { CheckList, Popup, SearchBar, Space } from 'antd-mobile';
+import { find, isEmpty, map, omit } from 'lodash-es';
 import React, {
   useEffect,
   useImperativeHandle,
@@ -5,8 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { CheckList, Popup, SearchBar, Space } from 'antd-mobile';
-import { find, isEmpty, map, omit } from 'lodash-es';
+
 import styles from './index.module.scss';
 
 export default function MySelect(props: any) {
@@ -15,7 +16,9 @@ export default function MySelect(props: any) {
     onChange,
     placeholder = '请选择',
     options,
+    readOnly,
   } = omit(props, ['addons', 'schema']);
+  console.log('!!!', readOnly, props);
 
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(value);
@@ -61,6 +64,11 @@ export default function MySelect(props: any) {
       selectRef.current = null;
     };
   }, []);
+
+  // if (readOnly) {
+  //   // 只读组件待实现
+  //   // return  showLabels(value)
+  // }
 
   return (
     <>

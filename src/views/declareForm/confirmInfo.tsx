@@ -12,7 +12,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import ImgIndexBg from '@/assets/policyDetail/bg.png';
 import policyStatusIcon from '@/assets/policyDetail/policyStatus.png';
 import { IsJsonString } from '@/views/declareForm/commonTools';
-import UploadImage from '@/views/declareForm/Upload';
+import UploadImage from '@/views/declareForm/components/Upload';
 import useDeclareForm from '@/views/declareForm/useDeclareForm';
 
 import styles from './index.module.scss';
@@ -549,7 +549,11 @@ export default function ConfirmInfo() {
                 name="AttachProof"
                 label={<div className={styles.label}>营业执照</div>}
               >
-                <UploadImage />
+                <UploadImage
+                  maxCount={5}
+                  fileSize={5}
+                  memo="若营业执照内容有变更，请在此重新上传；支持扩展名：pdf、jepg、jpg、png，单文件5M内大小"
+                />
                 <div>描述信息</div>
               </Form.Item>
             </div>

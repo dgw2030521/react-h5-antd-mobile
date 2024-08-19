@@ -1,4 +1,8 @@
-export default function useLogin() {
+interface UseLoginProps {
+  initUserInfo: Partial<any>;
+}
+
+export default function useLogin(initProps?: UseLoginProps) {
   return {
     isLogin: true,
     login: () => {},

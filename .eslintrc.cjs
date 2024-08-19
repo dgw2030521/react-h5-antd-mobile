@@ -28,7 +28,7 @@ module.exports = {
     'no-shadow': 1,
     'no-param-reassign': 1,
     'no-underscore-dangle': 0, // 允许下划线变量
-    'no-unused-vars': 0, // 关掉eslint自带的
+    'no-unused-vars': 0, // 允许未使用变量,关掉eslint自带的
     'no-unsafe-optional-chaining': 0,
     'no-use-before-define': 0,
     'consistent-return': 0,
@@ -37,12 +37,22 @@ module.exports = {
     'no-lonely-if': 0,
     'prefer-destructuring': 0,
 
+    // simple-import-sort
+    'simple-import-sort/imports': 1, // 导入排序
+    'simple-import-sort/exports': 1, // 导出排序
+    // import
+    'import/extensions': 0, // 允许import后缀,比如scss
+    'import/no-cycle': 2, // 禁止循环引用
+    'import/no-unresolved': 0, // 允许import未定义
+    'import/prefer-default-export': 0, // 允许默认导出
+    'import/exports-last': 2, // 导出必须放在最后
     // unused-imports
-    'unused-imports/no-unused-imports': 'error',
-    'unused-imports/no-unused-vars': 'error',
+    'unused-imports/no-unused-imports': 2, // 禁止未使用的import
+    'unused-imports/no-unused-vars': 2, // 禁止未使用的变量
     // react-hooks
     'react-hooks/exhaustive-deps': 1, // 检查hooks依赖'
     'react-hooks/rules-of-hooks': 2, // 检查hooks依赖'
+
     // react 规则
     'react/react-in-jsx-scope': 0,
     'react/jsx-uses-react': 2,
@@ -68,37 +78,30 @@ module.exports = {
     'react/no-unused-class-component-methods': 1,
     'react/destructuring-assignment': 0,
     'react/no-unstable-nested-components': 0,
-    // simple-import-sort
-    'simple-import-sort/imports': 1,
-    'simple-import-sort/exports': 1,
-    // import
-    'import/extensions': 0,
-    'import/no-cycle': 2,
-    'import/no-unresolved': 0,
-    'import/prefer-default-export': 0,
-    'import/exports-last': 2,
+
     // ts规则
+    '@typescript-eslint/no-var-requires': 0, // 允许require
     '@typescript-eslint/no-unused-vars': 0, // 关掉ts自带的
-    '@typescript-eslint/no-floating-promises': 0,
-    '@typescript-eslint/no-unsafe-call': 0,
-    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-floating-promises': 0, // 允许promise
+    '@typescript-eslint/no-unsafe-call': 0, // 允许call
+    '@typescript-eslint/no-explicit-any': 0, // 允许any
     '@typescript-eslint/no-unsafe-return': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-use-before-define': 1,
     '@typescript-eslint/restrict-template-expressions': 0,
     '@typescript-eslint/no-empty-interface': 0,
-    '@typescript-eslint/ban-ts-comment': 1,
-    '@typescript-eslint/no-empty-function': 1,
-    '@typescript-eslint/ban-types': 0,
-    '@typescript-eslint/no-for-in-array': 0,
+    '@typescript-eslint/ban-ts-comment': 1, // 禁止ts注释
+    '@typescript-eslint/no-empty-function': 1, // 禁止空函数
+    '@typescript-eslint/ban-types': 0, // 禁止类型
+    '@typescript-eslint/no-for-in-array': 0, // 禁止for in
     '@typescript-eslint/require-await': 0,
     '@typescript-eslint/no-misused-promises': 0,
     // 保留any的使用，编码时尽量避免
-    '@typescript-eslint/no-unsafe-argument': 0,
+    '@typescript-eslint/no-unsafe-argument': 0, // 允许参数
     '@typescript-eslint/no-unsafe-assignment': 0,
     '@typescript-eslint/no-unsafe-member-access': 0,
     // jsx
-    'jsx-a11y/no-static-element-interactions': 0,
+    'jsx-a11y/no-static-element-interactions': 0, // 允许静态元素交互
     'jsx-a11y/anchor-has-content': 0,
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/anchor-is-valid': 0,
