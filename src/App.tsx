@@ -5,7 +5,7 @@ import { ConfigProvider, Toast } from 'antd-mobile';
 import zhCN from 'antd-mobile/es/locales/zh-CN';
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Vconsole from 'vconsole';
+import VConsole from 'vconsole';
 
 import routes from './router';
 import { LoginProvider } from './store/user';
@@ -31,7 +31,7 @@ const initUserInfo: Partial<any> = {
 };
 
 const App = () => {
-  const vConsole = new Vconsole();
+  const vConsole = new VConsole();
   console.log(vConsole);
 
   return (
