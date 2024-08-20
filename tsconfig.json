@@ -15,24 +15,23 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "global.d.ts"],
+  "include": ["src", "global.d.ts"],
   "exclude": [
-    "node_modules",
+    "**/node_modules",
     "build",
     "dist",
-    "scripts",
-    "src/service",
-    "src/types"
+    "scripts"
+    //    "src/service",
+    //    "src/types"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
-  //  编译工具，无需引入
-  //  "references": [
-  //    {
-  //      "path": "./tsconfig.node.json"
-  //    }
-  //  ]
 }
