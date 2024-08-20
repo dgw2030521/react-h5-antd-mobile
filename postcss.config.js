@@ -15,6 +15,7 @@ module.exports = {
       exclude: [/node_modules/], // 设置忽略文件，用正则做目录名匹配
       landscape: false, // 是否处理横屏情况
     },
+    // 用来处理元素的宽高比
     'postcss-aspect-ratio-mini': {},
     // 直接在css中写svg，可用来解决1px问题，
     'postcss-write-svg': {
