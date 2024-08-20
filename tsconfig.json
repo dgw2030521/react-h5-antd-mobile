@@ -20,7 +20,15 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "global.d.ts"]
+  "include": ["src/**/*", "global.d.ts"],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "scripts",
+    "src/service",
+    "src/types"
+  ]
   //  编译工具，无需引入
   //  "references": [
   //    {
