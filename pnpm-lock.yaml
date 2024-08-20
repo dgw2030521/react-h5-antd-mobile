@@ -47,6 +47,9 @@ dependencies:
   p-map:
     specifier: ^7.0.2
     version: 7.0.2
+  p-props:
+    specifier: ^6.0.0
+    version: 6.0.0
   react:
     specifier: ^18.3.1
     version: 18.3.1
@@ -5283,9 +5286,21 @@ packages:
       p-limit: 4.0.0
     dev: true
 
+  /p-map@6.0.0:
+    resolution: {integrity: sha512-T8BatKGY+k5rU+Q/GTYgrEf2r4xRMevAN5mtXc2aPc4rS1j3s+vWTaO2Wag94neXuCAUAs8cxBL9EeB5EA6diw==}
+    engines: {node: '>=16'}
+    dev: false
+
   /p-map@7.0.2:
     resolution: {integrity: sha512-z4cYYMMdKHzw4O5UkWJImbZynVIo0lSGTXc7bzB1e/rrDqkgGUNysK/o4bTr+0+xKvvLoTyGqYC4Fgljy9qe1Q==}
     engines: {node: '>=18'}
+    dev: false
+
+  /p-props@6.0.0:
+    resolution: {integrity: sha512-vk89p9/3y/53LtD99tg1Ld2deVb4BXzw3Ekl1/0unNTvHAqbmgrf+T7eLDXv0mkVXl0mc/wmJoeO00IK7UwF7A==}
+    engines: {node: '>=18'}
+    dependencies:
+      p-map: 6.0.0
     dev: false
 
   /parent-module@1.0.1:

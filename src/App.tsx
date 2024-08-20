@@ -7,7 +7,7 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import VConsole from 'vconsole';
 
-import routes from './router';
+import routes from './routes';
 import { LoginProvider } from './store/user';
 import { token_name } from './utils/constant';
 
