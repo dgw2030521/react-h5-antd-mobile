@@ -17,7 +17,8 @@ module.exports = {
     },
     // 用来处理元素的宽高比
     'postcss-aspect-ratio-mini': {},
-    // 直接在css中写svg，可用来解决1px问题，
+    // 直接在css中写svg，可用来解决1px问题，用了postcss-px-to-viewport-8-plugin之后可以不用这个svg的方式了
+    // 将svg文件转换为css中的data URI，并省略引用svg文件的步骤，减少网络请求
     'postcss-write-svg': {
       utf8: false,
     },
