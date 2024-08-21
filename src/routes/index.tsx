@@ -23,7 +23,7 @@ const routes = [
       {
         path: '/form',
         handle: {
-          title: '表单 ',
+          title: 'h5表单 ',
         },
         element: <DeclareForm />,
       },
