@@ -48,7 +48,7 @@ const download = (response: AxiosResponse) => {
 
 interface PendingType {
   url?: string;
-  method?: Method;
+  method?: Method | string;
   params: any;
   data: any;
   cancel: Function;
@@ -81,38 +81,43 @@ const removePending = (config: AxiosRequestConfig) => {
   }
 };
 
+// 默认实例
 const axiosInstance = axios.create({
   baseURL: host,
   timeout: 10000,
-  withCredentials: false,
+  // 跨域请求是否携带cookie
+  withCredentials: true,
   responseType: 'json',
   // responseType: 'blob'; 下载
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
+    // 登录完成之后，将用户的token通过localStorage或者cookie存在本地
+    Authorization: localStorage.getItem(token_name),
   },
 });
 
 // 请求拦截器
 axiosInstance.interceptors.request.use(
-  (req: InternalAxiosRequestConfig) => {
-    req.headers.Authorization = localStorage.getItem(token_name);
-    if (req.data instanceof FormData) {
-      req.headers['Content-Type'] = 'multipart/form-data;charset=utf-8';
+  (reqConfig: InternalAxiosRequestConfig) => {
+    if (reqConfig.data instanceof FormData) {
+      reqConfig.headers['Content-Type'] = 'multipart/form-data;charset=utf-8';
     }
+    const token = localStorage.getItem(token_name);
+    if (token) reqConfig.headers.Authorization = token;
 
-    removePending(req);
-    req.cancelToken = new CancelToken(c => {
+    removePending(reqConfig);
+    reqConfig.cancelToken = new CancelToken(c => {
       pending.push({
-        url: req.url,
-        method: `${req.method}`,
-        params: req.params,
-        data: req.data,
+        url: reqConfig.url,
+        method: reqConfig.method,
+        params: reqConfig.params,
+        data: reqConfig.data,
         cancel: c,
       });
     });
 
     return {
-      ...req,
+      ...reqConfig,
       cancelToken: source.token,
       signal: controller.signal,
     };
@@ -123,7 +128,7 @@ axiosInstance.interceptors.request.use(
 );
 
 /**
- * 响应请求处理
+ * 响应拦截器
  */
 axiosInstance.interceptors.response.use(
   async response => {
