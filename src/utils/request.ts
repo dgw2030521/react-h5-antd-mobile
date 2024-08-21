@@ -4,6 +4,10 @@
  * 2、文件上传 formData https://axios-http.com/zh/docs/multipart
  * 3、json提交 application/json
  * 4、下载文件 stream
+ *
+ * !!! 需增加能力
+ * 1、取消重复请求
+ * 2、登录失效，取消后续所有无效请求
  */
 
 import type {
@@ -48,38 +52,15 @@ const download = (response: AxiosResponse) => {
 
 interface PendingType {
   url?: string;
-  method?: Method | string;
+  method?: Method;
   params: any;
   data: any;
   cancel: Function;
 }
-
-// 登录失效
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-const controller = new AbortController();
-
 // 取消重复请求
 const pending: Array<PendingType> = [];
-// 移除重复请求
-const removePending = (config: AxiosRequestConfig) => {
-  for (const key in pending) {
-    const item: number = +key;
-    const list: PendingType = pending[key];
-    // 当前请求在数组中存在时执行函数体
-    if (
-      list.url === config.url &&
-      list.method === config.method &&
-      JSON.stringify(list.params) === JSON.stringify(config.params) &&
-      JSON.stringify(list.data) === JSON.stringify(config.data)
-    ) {
-      // 执行取消操作
-      list.cancel('操作太频繁，请稍后再试');
-      // 从数组中移除记录
-      pending.splice(item, 1);
-    }
-  }
-};
+
+const controller = new AbortController();
 
 // 默认实例
 const axiosInstance = axios.create({
@@ -99,31 +80,20 @@ const axiosInstance = axios.create({
 // 请求拦截器
 axiosInstance.interceptors.request.use(
   (reqConfig: InternalAxiosRequestConfig) => {
+    // FormData的时候需要特殊处理，或者两个都自己设置
     if (reqConfig.data instanceof FormData) {
       reqConfig.headers['Content-Type'] = 'multipart/form-data;charset=utf-8';
     }
     const token = localStorage.getItem(token_name);
     if (token) reqConfig.headers.Authorization = token;
 
-    removePending(reqConfig);
-    reqConfig.cancelToken = new CancelToken(c => {
-      pending.push({
-        url: reqConfig.url,
-        method: reqConfig.method,
-        params: reqConfig.params,
-        data: reqConfig.data,
-        cancel: c,
-      });
-    });
-
     return {
       ...reqConfig,
-      cancelToken: source.token,
       signal: controller.signal,
     };
   },
-  (err: AxiosError) => {
-    return Promise.reject(err);
+  (error: AxiosError) => {
+    return Promise.reject(error);
   },
 );
 
@@ -132,53 +102,92 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   async response => {
-    removePending(response.config);
-
+    // 下载文件
     if (
       response.data instanceof Blob &&
       response.data.type?.includes('application/json')
     ) {
-      const text = await response.data?.text();
-      const json = JSON.parse(text);
+      const dataText = await response.data?.text();
+      const dataJson = JSON.parse(dataText);
       return {
         ...response,
-        data: json,
+        data: dataJson,
       };
     }
-    return response;
+    if (response.status === 200) {
+      return Promise.resolve(response);
+    }
+    return Promise.reject(response);
   },
-  err => {
-    return Promise.reject(err);
+  error => {
+    if (error.response.status) {
+      switch (error.response.status) {
+        // 401: 未登录
+        // 未登录则跳转登录页面，并携带当前页面的路径
+        // 在登录成功后返回当前页面，这一步需要在登录页操作。
+        case 401:
+          // router.replace({
+          //   path: '/login',
+          //   query: {
+          //     redirect: router.currentRoute.fullPath,
+          //   },
+          // });
+          console.error('未登录');
+          // controller.abort('取消之后发送的所有请求');
+          break;
+
+        // 403 token过期
+        // 登录过期对用户进行提示
+        // 清除本地token和清空store中token对象
+        // 跳转登录页面
+        case 403:
+          console.error('登录过期，请重新登录');
+          // 清除token
+          localStorage.removeItem('token');
+          // controller.abort('取消之后发送的所有请求');
+
+          // store.commit('loginSuccess', null);
+          // // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
+          // setTimeout(() => {
+          //   router.replace({
+          //     path: '/login',
+          //     query: {
+          //       redirect: router.currentRoute.fullPath,
+          //     },
+          //   });
+          // }, 1000);
+          break;
+
+        // 404请求不存在
+        case 404:
+          console.error('网络请求不存在');
+          break;
+        // 其他错误，直接抛出错误提示
+        default:
+          console.error('请求错误');
+      }
+      return Promise.reject(error.response);
+    }
   },
 );
 
-async function axiosRequest<T>(req: AxiosRequestConfig) {
+async function axiosRequest<T>(req: Partial<AxiosRequestConfig>) {
   return new Promise<T>((resolve, reject) => {
     axiosInstance
       .request<Response<T>>(req)
       .then(resp => {
-        const { status } = resp;
+        console.log('完整的response:::', resp);
+        // 只接收了status=200的请求
         const result = resp.data;
-        if (status < 200 || status > 300) {
-          reject(result);
-        }
         // 下载
         if (result instanceof Blob) {
-          return download(resp);
+          download(resp);
+          resolve(null);
         }
         // 普通返回
         if (!result.success) {
-          if (
-            result.errorCode === '401' ||
-            result.errorCode === '401_1' ||
-            result.errorCode === '401_0' ||
-            result.errorCode === '003'
-          ) {
-            // 登录失效后，取消后续的http请求
-            source.cancel('登录失效');
-            // 不支持 message 参数
-            controller.abort();
-
+          if (result.errorCode.indexOf('401') > -1) {
+            // controller.abort('取消之后发送的所有请求');
             // 登录失效后的处理
             // window.location.href = configParams.loginErrUrl;
           }
@@ -194,43 +203,15 @@ async function axiosRequest<T>(req: AxiosRequestConfig) {
   });
 }
 
-function rpcRequest<T>(props: Partial<AxiosRequestConfig>) {
-  const req: AxiosRequestConfig = {
-    // `paramsSerializer` 是一个负责 `params` 序列化的函数
-    // (e.g. https://www.npmjs.com/package/qs, http://api.jquery.com/jquery.param/)
-    // paramsSerializer(params) {
-    //   return Qs.stringify(params, { arrayFormat: 'brackets' });
-    // },
-    ...props,
-    method: props.method || 'GET',
-  };
-
-  if (props.data) {
-    const { data } = props;
-    // 文件上传
-    if (
-      req.headers?.['Content-Type'] === 'multipart/form-data' ||
-      data instanceof FormData
-    ) {
-      req.data = data;
-    } else if (req.method.toUpperCase() === 'GET') {
-      req.params = data;
-    } else {
-      // 转成string
-      req.data = JSON.stringify(data);
-    }
-  }
-
-  return axiosRequest<T>(req);
-}
-
 const request = {
   get: <T>(url: string, config?: Partial<AxiosRequestConfig>) =>
-    rpcRequest<T>({ ...config, url, method: 'GET' }),
+    axiosRequest<T>({ ...config, url, method: 'GET' }),
+  delete: <T>(url: string, config?: Partial<AxiosRequestConfig>) =>
+    axiosRequest<T>({ ...config, url, method: 'DELETE' }),
   post: <T>(url: string, data: any, config?: Partial<AxiosRequestConfig>) =>
-    rpcRequest<T>({ ...config, url, data, method: 'POST' }),
+    axiosRequest<T>({ ...config, url, data, method: 'POST' }),
   put: <T>(url: string, data: any, config?: Partial<AxiosRequestConfig>) =>
-    rpcRequest<T>({ ...config, url, data, method: 'PUT' }),
+    axiosRequest<T>({ ...config, url, data, method: 'PUT' }),
 };
 
-export { axiosInstance as axios, request, rpcRequest };
+export { axiosInstance as axios, axiosRequest, request };
