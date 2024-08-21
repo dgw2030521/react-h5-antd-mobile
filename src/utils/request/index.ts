@@ -4,7 +4,9 @@
  * 2、文件上传 formData https://axios-http.com/zh/docs/multipart
  * 3、json提交 application/json
  * 4、下载文件 stream
- *
+ * =================================================================
+ * 1、重复请求取消
+ * 2、请求失败重试
  */
 
 import type {
@@ -41,6 +43,20 @@ const axiosInstance = axios.create({
   },
 });
 
+// 增加retry配置
+axiosRetry(axiosInstance, {
+  retries: 4,
+  retryCondition: err => {
+    return (
+      axiosRetry.isNetworkOrIdempotentRequestError(err) ||
+      //  如果是cancelError，err没有response对象
+      err?.response?.status === 404
+    );
+  },
+  shouldResetTimeout: true,
+  retryDelay: axiosRetry.linearDelay(),
+});
+
 // 请求拦截器
 axiosInstance.interceptors.request.use(
   (reqConfig: InternalAxiosRequestConfig) => {
@@ -71,7 +87,7 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   async res => {
-    console.log('@@@@@response.interceptors res', res);
+    // console.log('@@@@@response.interceptors res', res);
     const status = res.data.code || res.status;
     // 如果请求为非200否者默认统一处理
     if (status !== 200 && status !== 201) {
@@ -100,7 +116,7 @@ axiosInstance.interceptors.response.use(
     return Promise.resolve(res);
   },
   error => {
-    console.log('@@@@@response.interceptors error', error);
+    // console.log('@@@@@response.interceptors error', error);
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
@@ -157,16 +173,6 @@ axiosInstance.interceptors.response.use(
     }
   },
 );
-
-// 增加retry配置
-axiosRetry(axiosInstance, {
-  retries: 4,
-  retryCondition: err =>
-    axiosRetry.isNetworkOrIdempotentRequestError(err) ||
-    err.response.status === 404,
-  shouldResetTimeout: true,
-  retryDelay: axiosRetry.linearDelay(),
-});
 
 async function axiosRequest<T>(req: Partial<AxiosRequestConfig>) {
   return new Promise<T>((resolve, reject) => {
