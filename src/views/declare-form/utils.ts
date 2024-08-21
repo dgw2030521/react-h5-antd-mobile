@@ -133,9 +133,9 @@ const convertInitialValueBySchemaDefine = (
 const demoSchema = {
   type: 'object',
   properties: {
-    18616838766: {
+    META_18616838766: {
       type: 'object',
-      title: '卡片主题',
+      title: '卡片主题1',
       description: '这是一个对象类型',
       widget: 'formBox',
       props: { expand: true, hideExpandBtn: true },
@@ -183,9 +183,32 @@ const demoSchema = {
           type: 'number',
           widget: 'stepper',
         },
+        selector3: {
+          title: 'selector单选1',
+          type: 'string',
+          widget: 'selector',
+          enum: ['a', 'b', 'c'],
+          enumNames: ['早', '中', '晚'],
+        },
         selector: {
-          // required: true,
-          title: '选择组多选',
+          required: true,
+          title: 'selector单选2',
+          type: 'string',
+          widget: 'selector',
+          props: {
+            options: [
+              { label: 'A', value: 'a' },
+              { label: 'B', value: 'b' },
+              { label: 'C', value: 'c' },
+              { label: 'D', value: 'd' },
+              { label: 'E', value: 'e' },
+              { label: 'F', value: 'f' },
+            ],
+          },
+        },
+        selector2: {
+          required: true,
+          title: 'selector多选',
           type: 'string',
           widget: 'selector',
           props: {
@@ -200,33 +223,39 @@ const demoSchema = {
             ],
           },
         },
-        selector2: {
-          title: '选择组单选',
-          type: 'string',
-          widget: 'selector',
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
-        },
         radio: {
-          title: '单选',
+          title: '单选Radio',
           type: 'string',
           widget: 'radio',
           enum: ['a', 'b', 'c'],
           enumNames: ['早', '中', '晚'],
-          // props: {
-          //   options: [
-          //     { label: '早', value: 'a' },
-          //     { label: '中', value: 'b' },
-          //     { label: '晚', value: 'c' },
-          //   ],
-          // },
+        },
+        MyCheckBoxSingle: {
+          title: '单选Checkbox',
+          type: 'boolean',
+          widget: 'MyCheckBoxSingle',
+        },
+        MyCheckBoxMultiple: {
+          title: '多选Checkbox',
+          type: 'array',
+          widget: 'MyCheckBoxMultiple',
+          enum: ['a', 'b', 'c'],
+          enumNames: ['早', '中', '晚'],
+        },
+        dateTime: {
+          title: '时间',
+          type: 'string',
+          widget: 'datePicker',
+          props: {
+            precision: 'second',
+          },
         },
         date: {
           title: '日期',
           type: 'string',
           widget: 'datePicker',
           props: {
-            precision: 'month',
+            precision: 'day',
           },
         },
         city: {
@@ -247,55 +276,29 @@ const demoSchema = {
     },
     obj2: {
       type: 'object',
-      title: '卡片主题',
+      title: '卡片主题2',
       description: '这是一个对象类型',
       widget: 'formBox',
+      props: { hideExpandBtn: true },
       properties: {
-        picker: {
-          title: 'picker',
-          type: 'array',
-          widget: 'picker',
+        number_dQo1yu: {
+          title: '金额',
+          type: 'number',
+          UnitName: '元',
+          widget: 'MyNumber',
+        },
+        mySelect: {
           required: true,
+          title: '下拉多选',
+          type: 'array',
+          widget: 'mySelect',
           enum: ['a', 'b', 'c'],
           enumNames: ['早', '中', '晚'],
-          // props: {
-          //   options: [
-          //     { label: '火车', value: 1 },
-          //     { label: '飞机', value: 2 },
-          //     { label: '火箭', value: 3 },
-          //   ],
-          // },
-        },
-        input: {
-          title: '输入框',
-          type: 'string',
-          widget: 'input',
-          required: true,
-          placeholder: '请输入内容',
-        },
-        slider: {
-          title: '滑动条',
-          type: 'string',
-          widget: 'slider',
-        },
-        switch: {
-          title: '开关',
-          type: 'bool',
-          widget: 'switch',
-          props: {
-            uncheckedText: '关',
-            checkedText: '开',
-          },
-        },
-        stepper: {
-          title: '步进器',
-          type: 'number',
-          widget: 'stepper',
         },
         selector: {
-          // required: true,
-          title: '选择组多选',
-          type: 'string',
+          required: true,
+          title: '下拉多选',
+          type: 'array',
           widget: 'MySelect',
           props: {
             multiple: true,
@@ -308,13 +311,6 @@ const demoSchema = {
               { label: 'F', value: 'f' },
             ],
           },
-        },
-        selector2: {
-          title: '选择组单选',
-          type: 'string',
-          widget: 'selector',
-          enum: ['a', 'b', 'c'],
-          enumNames: ['早', '中', '晚'],
         },
       },
     },
