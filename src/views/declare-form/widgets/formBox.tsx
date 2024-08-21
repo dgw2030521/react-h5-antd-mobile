@@ -2,7 +2,7 @@ import { DownOutline, UpOutline } from 'antd-mobile-icons';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 
-import styles from '@/views/declareForm/index.module.scss';
+import styles from '@/views/declare-form/index.module.scss';
 
 interface FormBoxProps {
   title: string;

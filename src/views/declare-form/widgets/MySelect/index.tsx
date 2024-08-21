@@ -18,7 +18,6 @@ export default function MySelect(props: any) {
     options,
     readOnly,
   } = omit(props, ['addons', 'schema']);
-  console.log('!!!', readOnly, props);
 
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(value);

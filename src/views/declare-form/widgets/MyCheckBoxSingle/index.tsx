@@ -1,8 +1,8 @@
 /**
- * 单选的checkbox，比如同意协议
+ * 单选的checkbox，比如同意
  */
-import React from 'react';
 import { Checkbox } from 'antd-mobile';
+import React from 'react';
 
 export default function MyCheckBoxSingle(props: any) {
   const { schema, value, onChange } = props;

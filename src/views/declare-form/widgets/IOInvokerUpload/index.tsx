@@ -1,9 +1,8 @@
-import { UploadFileRO } from '@CodeDefine/customer/UploadFileRO';
 import { Image, Space } from 'antd-mobile';
 import { map } from 'lodash-es';
 import React from 'react';
 
-import Upload from '@/views/declareForm/components/Upload';
+import Upload from '@/views/declare-form/components/Upload';
 
 import styles from './index.module.scss';
 
@@ -13,11 +12,11 @@ export default function IOInvokerUpload(props: any) {
 
   if (readOnly) {
     if (value && typeof value === 'string') {
-      const itemList = JSON.parse(value) as UploadFileRO[];
+      const itemList = JSON.parse(value) as any[];
       return (
         <div className={styles.imagesContainer}>
           <Space wrap>
-            {map(itemList, (item: UploadFileRO) => {
+            {map(itemList, (item: any) => {
               return <Image className={styles.img} src={item.Url} />;
             })}
           </Space>

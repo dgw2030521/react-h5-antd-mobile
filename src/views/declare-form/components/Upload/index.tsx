@@ -1,4 +1,3 @@
-import { UploadFileRO } from '@CodeDefine/customer/UploadFileRO';
 import {
   Dialog,
   ImageUploader,
@@ -12,7 +11,7 @@ import update from 'immutability-helper';
 import { findIndex, map } from 'lodash-es';
 import React, { useEffect, useState } from 'react';
 
-import useUploadImage from '@/views/declareForm/useUploadImage';
+import useUploadImage from '@/views/declare-form/hooks/useUploadImage';
 
 import styles from './index.module.scss';
 
@@ -37,7 +36,7 @@ export default function Upload(props: UploadProps) {
   useEffect(() => {
     // value=[]的时候，说明是新渲染，不需要处理
     if (value && typeof value === 'string') {
-      const itemList = JSON.parse(value) as UploadFileRO[];
+      const itemList = JSON.parse(value) as any[];
       const _fileList = map(itemList, item => {
         return convertToFile(item);
       });
@@ -51,7 +50,7 @@ export default function Upload(props: UploadProps) {
    */
   const convertUploadFileList = (files: NewImageUploadItem[]) => {
     return files.map(item => {
-      const obj = new UploadFileRO();
+      const obj = {} as any;
       obj.Key = `${item.key}`;
       obj.Url = item.url;
       obj.Name = item.name;
@@ -61,7 +60,7 @@ export default function Upload(props: UploadProps) {
     });
   };
 
-  const convertToFile = (file: UploadFileRO): NewImageUploadItem => {
+  const convertToFile = (file: any): NewImageUploadItem => {
     return {
       url: file.Url,
       key: file.Key,
@@ -80,7 +79,7 @@ export default function Upload(props: UploadProps) {
 
   const handleUpload = async (file: File) => {
     try {
-      const result = await handleImageUpload(file);
+      const result: any = await handleImageUpload(file);
 
       const newFileList = update(fileList, {
         $push: [
