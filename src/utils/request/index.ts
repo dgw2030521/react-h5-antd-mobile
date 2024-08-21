@@ -41,16 +41,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// 增加retry配置
-axiosRetry(axiosInstance, {
-  retries: 4,
-  retryCondition: err =>
-    axiosRetry.isNetworkOrIdempotentRequestError(err) ||
-    err.response.status === 404,
-  shouldResetTimeout: true,
-  retryDelay: axiosRetry.linearDelay(),
-});
-
 // 请求拦截器
 axiosInstance.interceptors.request.use(
   (reqConfig: InternalAxiosRequestConfig) => {
@@ -81,6 +71,7 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   async res => {
+    console.log('@@@@@response.interceptors res', res);
     const status = res.data.code || res.status;
     // 如果请求为非200否者默认统一处理
     if (status !== 200 && status !== 201) {
@@ -105,63 +96,77 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(res);
     }
     removePendingRequest(res.config); // 从pendingRequest对象中移除请求
+
     return Promise.resolve(res);
   },
   error => {
+    console.log('@@@@@response.interceptors error', error);
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
 
     removePendingRequest(error?.config || {});
     const errStatus = error?.response?.status;
-    switch (errStatus) {
-      // 401: 未登录
-      // 未登录则跳转登录页面，并携带当前页面的路径
-      // 在登录成功后返回当前页面，这一步需要在登录页操作。
-      case 401:
-        // router.replace({
-        //   path: '/login',
-        //   query: {
-        //     redirect: router.currentRoute.fullPath,
-        //   },
-        // });
-        console.error('未登录');
-        // controller.abort('取消请求');
-        break;
+    if (errStatus) {
+      switch (errStatus) {
+        // 401: 未登录
+        // 未登录则跳转登录页面，并携带当前页面的路径
+        // 在登录成功后返回当前页面，这一步需要在登录页操作。
+        case 401:
+          // router.replace({
+          //   path: '/login',
+          //   query: {
+          //     redirect: router.currentRoute.fullPath,
+          //   },
+          // });
+          console.error('未登录');
+          // controller.abort('取消请求');
+          break;
 
-      // 403 token过期
-      // 登录过期对用户进行提示
-      // 清除本地token和清空store中token对象
-      // 跳转登录页面
-      case 403:
-        console.error('登录过期，请重新登录');
-        // 清除token
-        localStorage.removeItem('token');
-        // controller.abort('取消请求');
+        // 403 token过期
+        // 登录过期对用户进行提示
+        // 清除本地token和清空store中token对象
+        // 跳转登录页面
+        case 403:
+          console.error('登录过期，请重新登录');
+          // 清除token
+          localStorage.removeItem('token');
+          // controller.abort('取消请求');
 
-        // store.commit('loginSuccess', null);
-        // // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
-        // setTimeout(() => {
-        //   router.replace({
-        //     path: '/login',
-        //     query: {
-        //       redirect: router.currentRoute.fullPath,
-        //     },
-        //   });
-        // }, 1000);
-        break;
+          // store.commit('loginSuccess', null);
+          // // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
+          // setTimeout(() => {
+          //   router.replace({
+          //     path: '/login',
+          //     query: {
+          //       redirect: router.currentRoute.fullPath,
+          //     },
+          //   });
+          // }, 1000);
+          break;
 
-      // 404请求不存在
-      case 404:
-        console.error('网络请求不存在');
-        break;
-      // 其他错误，直接抛出错误提示
-      default:
-        console.error('请求错误');
+        // 404请求不存在
+        case 404:
+          console.error('网络请求不存在');
+          break;
+        // 其他错误，直接抛出错误提示
+        default:
+          console.error('请求错误');
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
   },
 );
+
+// 增加retry配置
+axiosRetry(axiosInstance, {
+  retries: 4,
+  retryCondition: err =>
+    axiosRetry.isNetworkOrIdempotentRequestError(err) ||
+    err.response.status === 404,
+  shouldResetTimeout: true,
+  retryDelay: axiosRetry.linearDelay(),
+});
 
 async function axiosRequest<T>(req: Partial<AxiosRequestConfig>) {
   return new Promise<T>((resolve, reject) => {
