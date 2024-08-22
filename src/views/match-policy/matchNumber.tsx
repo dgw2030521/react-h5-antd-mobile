@@ -1,6 +1,7 @@
-import React from 'react';
 import classNames from 'classnames';
-import styles from '@/views/matchPolicy/index.module.scss';
+import React from 'react';
+
+import styles from '@/views/match-policy/index.module.scss';
 
 interface MatchNumberProps {
   count: string;

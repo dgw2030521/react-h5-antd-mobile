@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from 'react';
 import { Button, Empty, Form, Input, Modal, Toast } from 'antd-mobile';
-import { useNavigate } from 'react-router-dom';
 import { isEmpty } from 'lodash-es';
-import styles from './index.module.scss';
-import useQuestion from '@/views/questionForm/useQuestion';
-import useMeta from '@/views/questionForm/useMeta';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import RenderForm from '@/components/RenderForm';
-import { transformCodeName } from '@/utils/constant';
 import { useLoginContext } from '@/store/user';
+import { transformCodeName } from '@/utils/constant';
+import useMeta from '@/views/question-form/useMeta';
+import useQuestion from '@/views/question-form/useQuestion';
+
+import styles from './index.module.scss';
 
 export default function QuestionForm() {
   const searchInputRef = useRef(null);

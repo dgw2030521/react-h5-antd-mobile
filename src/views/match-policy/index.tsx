@@ -1,16 +1,18 @@
 /**
  * 智能匹配结果
  */
-import React, { useEffect, useState } from 'react';
 import { Button, Modal, Popup } from 'antd-mobile';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash-es';
+import React, { useEffect, useState } from 'react';
+
+import DeepMatch from '@/views/match-policy/deepMatch';
+import MatchNumber from '@/views/match-policy/matchNumber';
+import useMatchPolicy from '@/views/match-policy/useMatchPolicy';
+import useMeta from '@/views/question-form/useMeta';
+
 import styles from './index.module.scss';
 import MatchResult from './matchResult';
-import DeepMatch from '@/views/matchPolicy/deepMatch';
-import MatchNumber from '@/views/matchPolicy/matchNumber';
-import useMatchPolicy from '@/views/matchPolicy/useMatchPolicy';
-import useMeta from '@/views/questionForm/useMeta';
 
 interface MatchPolicyProps {
   policyId: string;

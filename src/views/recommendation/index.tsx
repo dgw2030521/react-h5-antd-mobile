@@ -4,15 +4,15 @@
  * 重新计算
  * QuestionaireInvoker.calculate
  */
-import React, { useEffect, useState } from 'react';
-
-import { useNavigate } from 'react-router-dom';
-import { isEmpty, map } from 'lodash-es';
 import { Empty } from 'antd-mobile';
+import { isEmpty, map } from 'lodash-es';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import ImgIndexBg from '@/assets/recommendation/bgIcon.png';
-import styles from './index.module.scss';
-import PolicyItem from '@/views/policy/list/components/PolicyItem';
 import useRecomend from '@/views/recommendation/useRecomend';
+
+import styles from './index.module.scss';
 
 export default function Recommendation() {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ export default function Recommendation() {
           )}
           {!isEmpty(calculateResult?.PolicyList) &&
             map(calculateResult?.PolicyList, (item, index) => (
-              <PolicyItem data={item} key={index} />
+              <div key={index}>policyItem</div>
             ))}
         </div>
       </div>

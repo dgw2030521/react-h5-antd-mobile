@@ -1,16 +1,17 @@
-import React from 'react';
+import { FieldConditionOperateType } from '@CodeDefine/customer/FieldConditionOperateType';
+import { MetaEnumRO } from '@CodeDefine/customer/MetaEnumRO';
+import { MetaValueType } from '@CodeDefine/customer/MetaValueType';
+import { PolicyFieldConditionTO } from '@CodeDefine/customer/PolicyFieldConditionTO';
+import { PolicyFieldConditionTreeTO } from '@CodeDefine/customer/PolicyFieldConditionTreeTO';
+import { PolicyFieldValuateNodeTO } from '@CodeDefine/customer/PolicyFieldValuateNodeTO';
+import { PolicyRuleMatchDetailRO } from '@CodeDefine/customer/PolicyRuleMatchDetailRO';
 import { Button } from 'antd-mobile';
 import classNames from 'classnames';
-import { PolicyRuleMatchDetailRO } from '@CodeDefine/customer/PolicyRuleMatchDetailRO';
-import { MetaEnumRO } from '@CodeDefine/customer/MetaEnumRO';
 import { isEmpty, map } from 'lodash-es';
-import { FieldConditionOperateType } from '@CodeDefine/customer/FieldConditionOperateType';
-import { MetaValueType } from '@CodeDefine/customer/MetaValueType';
-import { PolicyFieldValuateNodeTO } from '@CodeDefine/customer/PolicyFieldValuateNodeTO';
-import { PolicyFieldConditionTreeTO } from '@CodeDefine/customer/PolicyFieldConditionTreeTO';
-import { PolicyFieldConditionTO } from '@CodeDefine/customer/PolicyFieldConditionTO';
-import MatchNumber from '@/views/matchPolicy/matchNumber';
-import styles from '@/views/matchPolicy/index.module.scss';
+import React from 'react';
+
+import styles from '@/views/match-policy/index.module.scss';
+import MatchNumber from '@/views/match-policy/matchNumber';
 
 interface ModalProps {
   closeModalCallback: () => void;

@@ -1,4 +1,10 @@
-import React, { Fragment, RefObject, useEffect } from 'react';
+import { FieldConditionOperateType } from '@CodeDefine/customer/FieldConditionOperateType';
+import { MetaEnumRO } from '@CodeDefine/customer/MetaEnumRO';
+import { MetaValueType } from '@CodeDefine/customer/MetaValueType';
+import { PolicyFieldConditionTO } from '@CodeDefine/customer/PolicyFieldConditionTO';
+import { PolicyFieldConditionTreeTO } from '@CodeDefine/customer/PolicyFieldConditionTreeTO';
+import { PolicyFieldValuateNodeTO } from '@CodeDefine/customer/PolicyFieldValuateNodeTO';
+import { PolicyRuleQuestionnaireRO } from '@CodeDefine/customer/PolicyRuleQuestionnaireRO';
 import {
   Button,
   DatePicker,
@@ -10,20 +16,18 @@ import {
   Space,
 } from 'antd-mobile';
 import classNames from 'classnames';
-import { PolicyFieldConditionTreeTO } from '@CodeDefine/customer/PolicyFieldConditionTreeTO';
-import { isEmpty, map } from 'lodash-es';
-import { PolicyFieldValuateNodeTO } from '@CodeDefine/customer/PolicyFieldValuateNodeTO';
-import { PolicyFieldConditionTO } from '@CodeDefine/customer/PolicyFieldConditionTO';
-import { MetaEnumRO } from '@CodeDefine/customer/MetaEnumRO';
-import { MetaValueType } from '@CodeDefine/customer/MetaValueType';
 import { setProperty } from 'dot-prop';
 import update from 'immutability-helper';
-import { PolicyRuleQuestionnaireRO } from '@CodeDefine/customer/PolicyRuleQuestionnaireRO';
+import { isEmpty, map } from 'lodash-es';
 import moment from 'moment';
-import { FieldConditionOperateType } from '@CodeDefine/customer/FieldConditionOperateType';
-import MatchNumber from '@/views/matchPolicy/matchNumber';
-import styles from '@/views/matchPolicy/index.module.scss';
-import { getOperationPath, transformFormData } from '@/views/matchPolicy/utils';
+import React, { Fragment, RefObject, useEffect } from 'react';
+
+import styles from '@/views/match-policy/index.module.scss';
+import MatchNumber from '@/views/match-policy/matchNumber';
+import {
+  getOperationPath,
+  transformFormData,
+} from '@/views/match-policy/utils';
 
 interface ModalProps {
   onSubmitCallback: (values: any) => void;
