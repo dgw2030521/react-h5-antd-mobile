@@ -13,12 +13,11 @@
     "commitlint": "commitlint --edit"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "eslint --fix",
-      "prettier --write"
+    "**/*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --cache --fix"
     ],
-    "*.{less,scss,css,md,json}": [
-      "prettier --write"
+    "**/*.{css,scss,less,stylu,md,json}": [
+      "prettier --write --cache --ignore-unknown"
     ]
   },
   "dependencies": {
