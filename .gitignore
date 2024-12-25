@@ -29,6 +29,7 @@ yarn-error.log*
 .vscode/**/*
 !.vscode/settings.json
 !.vscode/extensions.json
-.idea/
+
+.idea/**/*.*
 !.idea/jsLinters/eslint.xml
 !.idea/prettier.xml
